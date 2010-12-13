@@ -1,0 +1,21 @@
+dev:
+  server_url: https://wikihub-dev.berkeley.edu
+  ldap_host: ldap-test.berkeley.edu
+  username: <username>
+  password: <password>
+  user_default_password: <user_default_password>
+
+qa:
+  server_url: https://wikihub-qa.berkeley.edu
+  ldap_host: ldap.berkeley.edu
+  username: <username>
+  password: <password>
+  user_default_password: <user_default_password>
+
+prod:
+  server_url: https://wikihub.berkeley.edu
+  ldap_host: ldap.berkeley.edu
+  username: <username>
+  password: <password>
+  user_default_password: <user_default_password>
+

@@ -1,0 +1,8 @@
+.*.swp
+*.tmproj
+*.gemspec
+pkg
+.classpath
+.project
+log/*
+config/config.yml
