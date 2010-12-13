@@ -169,7 +169,7 @@ module Confluence
 
       groups.each { |grp| leave_group(grp) }
       self.fullname = "#{self.fullname} #{DEACTIVATED_SUFFIX}"
-      result = self.save
+      result = self.save()
       logger.debug("Disabled user: #{self}")
       result
     end
@@ -216,6 +216,12 @@ module Confluence
       # the newly created user object.
       #
       def find_or_create_from_ldap(name)
+        user = find_or_new_from_ldap(name)
+        user.save if user.new_record?
+        user
+      end
+      
+      def find_or_new_from_ldap(name)
         if (u = find_by_name(name))
           return u
         elsif (p = UCB::LDAP::Person.find_by_uid(name)).nil?
@@ -223,16 +229,20 @@ module Confluence
           logger.debug(msg)
           raise(LdapPersonNotFound, msg)
         else
-          u = self.new({
+          self.new({
             :name => p.uid.to_s,
             :fullname => "#{p.first_name} + #{p.last_name}",
             :email => p.email || "test@berkeley.edu"
           })
-          u.save
-          u
         end
       end
       
+      ##
+      # Returns a list of all Confluence users.
+      #
+      # @return [Array<String>] where each [String] is the user's username
+      # in Confluence.
+      #
       def all()
         conn.getActiveUsers(true) 
       end

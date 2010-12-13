@@ -2,9 +2,9 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Confluence do
   it "should initialize" do
-    ENV['CONFLUENCE_ENV'] = 'qa'
+    ENV['CONFLUENCE_ENV'] = 'test'
     Confluence.conn.should be_a(Confluence::Conn)
-    Confluence.env.should == :qa
+    Confluence.env.should == :test
   end
   
   it "should set ROOT" do

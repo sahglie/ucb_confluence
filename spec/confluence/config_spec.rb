@@ -4,11 +4,11 @@ describe Confluence::Config do
   it "should load its configuration" do
     config = Confluence::Config.new(:test)
     config[:env].should == :test
-    config[:server_url].should == "server_url_test/rpc/xmlrpc"
-    config[:ldap_url].should == "ldap_url_test"
-    config[:username].should == "username_test"
-    config[:password].should == "password_test"
-    config[:user_default_password].should == "user_default_password_test"        
+    config[:server_url].should match(/http/)
+    config[:ldap_url].should match(/ldap/)
+    config[:username].should_not be_nil
+    config[:password].should_not be_nil
+    config[:user_default_password].should_not be_nil
   end
 
   it "should recognize valid environments" do

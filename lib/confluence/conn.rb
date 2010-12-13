@@ -7,7 +7,7 @@ module Confluence
       server = XMLRPC::Client.new2(@config[:server_url])
       @conn = server.proxy("confluence1")
       @token = "12345"
-      do_connect
+      do_connect()
     end
 
     def method_missing(method_name, *args)
@@ -26,7 +26,10 @@ module Confluence
     def do_connect()
       @token = @conn.login(@config[:username], @config[:password])
     rescue XMLRPC::FaultException => e
-      raise e.faultString
+      raise(e.faultString)
+    rescue => e
+      Confluence.logger.debug("#{e.class}: #{e.message}")
+      raise(e)
     end
   end
 end

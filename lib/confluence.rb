@@ -1,10 +1,13 @@
 require 'pp'
 require 'logger'
 require 'ucb_ldap'
+
 require 'confluence/conn'
 require 'confluence/user'
 require 'confluence/group'
 require 'confluence/config'
+
+require 'confluence/jobs/ldap_sync'
 
 
 module Confluence
