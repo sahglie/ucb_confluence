@@ -41,6 +41,16 @@ module Confluence
           return false
         end
       end
+      
+      ##
+      # Predicate that indicates whether a given group exists in Confluence
+      #
+      # @param [String] the group name.
+      # @return [true,false]
+      #
+      def exists?(grp_name)
+        all.include?(grp_name)
+      end
     end
   end
 end

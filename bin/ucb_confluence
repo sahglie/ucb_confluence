@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+require 'pp'
+require 'rubygems'
+require 'rake'
+# $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + '/../lib'))
+require 'confluence'
+
+
+Rake.application.init("ucb_confluence")
+
+namespace(:jobs) do
+  desc "Sync Confluence IST group with LDAP IST group."
+  task(:ist_ldap_sync) do
+    Confluence::Jobs::IstLdapSync.new.execut()
+  end
+
+  desc "Disable expired Confluence users."
+  task(:disable_expired_users) do
+    Confluence::Jobs::DisableExpiredUsers()
+  end                 
+end
+
+namespace(:user) do
+  desc "List of names fo all users in Confluence."
+  task(:all_names) do
+    $stdout.puts(Confluence::User.all_names)
+  end
+
+  desc "List of all users in Confluence."
+  task(:all) do
+    $stdout.puts(Confluence::User.all)
+  end
+
+  desc "Number of users in Confluence."
+  task(:count) do
+    $stdout.puts(Confluence::User.all_names.length)
+  end
+
+  desc "List of groups for a given user in Confluence."
+  task(:groups) do
+    user = Confluence::User.find_by_name(ENV["NAME"])
+    if user
+      $stdout.puts(user.groups)
+    else
+      $stdout.puts("[]")
+    end
+  end
+
+  desc "Display info for a given user"
+  task(:find) do
+    $stdout.puts(Confluence::User.find_by_name(ENV["NAME"]))
+  end           
+end
+
+namespace(:group) do
+  desc "List of all groups in Confluence."
+  task(:all_names) do
+    $stdout.puts(Confluence::Group.all_names)
+  end
+
+  desc "Number of groups in Confluence."
+  task(:count) do
+    $stdout.puts(Confluence::Group.all.length)
+  end
+end
+
+
+Rake.application.top_level

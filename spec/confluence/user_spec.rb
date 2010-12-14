@@ -19,7 +19,7 @@ describe Confluence::User do
   end
   
   it "should find all users" do
-    Confluence::User.all.should_not be_empty
+    Confluence::User.all_names.should_not be_empty
   end
   
   it "should initialize a user" do

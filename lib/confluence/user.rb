@@ -18,7 +18,17 @@ module Confluence
         self.send("#{attr}=", attrs[attr] || attrs[attr.to_s])
       end
     end
-
+    
+    def self.new_from_ldap(ldap_person)
+      @new_record = true
+      @errors = []
+      self.new({
+        :name => ldap_person.uid,        
+        :fullname => "#{ldap_person.first_name} + #{ldap_person.last_name}",
+        :email => ldap_person.email || "test@berkeley.edu"
+      })
+    end
+    
     ##
     # Lets confluence XML-RPC access this object as if it was a Hash.
     # returns nil if key is not in VALID_ATTRS
@@ -69,6 +79,7 @@ module Confluence
     # @return [Array<String>] names of all groups.
     #
     def groups()
+      return [] if new_record?
       conn.getUserGroups(self.name)
     end
 
@@ -80,13 +91,13 @@ module Confluence
     #
     def join_group(grp)
       @errors.clear
-      if groups.include?(grp)
-        @errors << "User is already in group: #{grp}"
-        return false
-      else
+      unless groups.include?(grp)
         conn.addUserToGroup(self.name, grp)
         logger.debug("User [#{self}] added to group: #{grp}")
         return true
+      else
+        @errors << "User is already in group: #{grp}"
+        return false
       end
     rescue(RuntimeError) => e
       logger.debug(e.message)
@@ -168,7 +179,7 @@ module Confluence
       end
 
       groups.each { |grp| leave_group(grp) }
-      self.fullname = "#{self.fullname} #{DEACTIVATED_SUFFIX}"
+      self.fullname = "#{self.fullname} #{DISABLED_SUFFIX}"
       result = self.save()
       logger.debug("Disabled user: #{self}")
       result
@@ -238,15 +249,26 @@ module Confluence
       end
       
       ##
-      # Returns a list of all Confluence users.
+      # Returns a list of all Confluence user names.
       #
-      # @return [Array<String>] where each [String] is the user's username
+      # @return [Array<String>] where each entry is the user's name
       # in Confluence.
       #
-      def all()
+      def all_names()
         conn.getActiveUsers(true) 
       end
+
+      def all()
+        all_names.map { |name| find_by_name(name) }
+      end
       
+      ##
+      # Finds a given Confluence user by their username.
+      #
+      # @param [String] the username.
+      # @return [Confluence::User, nil] the found record, otherwise returns
+      # nil.
+      #
       def find_by_name(name)
         begin
           u = self.new(conn.getUser(name.to_s))

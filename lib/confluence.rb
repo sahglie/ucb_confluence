@@ -7,7 +7,8 @@ require 'confluence/user'
 require 'confluence/group'
 require 'confluence/config'
 
-require 'confluence/jobs/ldap_sync'
+require 'confluence/jobs/ist_ldap_sync'
+require 'confluence/jobs/disable_expired_users'
 
 
 module Confluence
@@ -23,7 +24,8 @@ module Confluence
     end
 
     def config
-      @config ||= Confluence::Config.new(ENV['CONFLUENCE_ENV'] || CONFLUENCE_ENV || :dev)
+      env = CONFLUENCE_ENV if defined?(CONFLUENCE_ENV)
+      @config ||= Confluence::Config.new(ENV['CONFLUENCE_ENV'] || env || :dev)
     end
 
     def logger
