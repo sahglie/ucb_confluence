@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+
 describe Confluence do
   it "should initialize" do
     ENV['CONFLUENCE_ENV'] = 'test'
@@ -8,7 +9,7 @@ describe Confluence do
   end
   
   it "should set ROOT" do
-    File.expand_path(File.dirname(__FILE__) + '/../../').should == Confluence.root
+    File.expand_path(File.dirname(__FILE__) + '/../../').should == Confluence.root()
   end
 
   it "should configure logging" do

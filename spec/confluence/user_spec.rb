@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+
 describe Confluence::User do
   before :all do
     @user = Confluence::User.new({

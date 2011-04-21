@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+
 describe Confluence::Group do
   before(:all) do
     Confluence::Group.delete("atestgroup") if Confluence::Group.all.include?("atestgroup")

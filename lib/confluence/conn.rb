@@ -1,5 +1,3 @@
-require 'xmlrpc/client'
-
 module Confluence
   class Conn
     def initialize(config)

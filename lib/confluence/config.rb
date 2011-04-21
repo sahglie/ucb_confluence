@@ -15,6 +15,7 @@ module Confluence
       @conf[:username] = conf['username'].to_s
       @conf[:password] = conf['password'].to_s      
       @conf[:user_default_password] = conf['user_default_password'].to_s
+      Confluence.logger.debug(@conf.inspect)
     end
 
     def [](key)

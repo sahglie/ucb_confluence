@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+
 describe Confluence::Config do
   it "should load its configuration" do
     config = Confluence::Config.new(:test)
