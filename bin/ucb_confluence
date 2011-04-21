@@ -3,7 +3,7 @@
 require 'pp'
 require 'rubygems'
 require 'rake'
-# $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + '/../lib'))
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + '/../lib'))
 require 'confluence'
 
 
@@ -12,31 +12,46 @@ Rake.application.init("ucb_confluence")
 namespace(:jobs) do
   desc "Sync Confluence IST group with LDAP IST group."
   task(:ist_ldap_sync) do
-    Confluence::Jobs::IstLdapSync.new.execut()
+    Confluence::Jobs::IstLdapSync.new.execute()
   end
 
   desc "Disable expired Confluence users."
   task(:disable_expired_users) do
-    Confluence::Jobs::DisableExpiredUsers()
+    Confluence::Jobs::DisableExpiredUsers.new.execute()
   end                 
 end
 
 namespace(:user) do
-  desc "List of names fo all users in Confluence."
-  task(:all_names) do
-    $stdout.puts(Confluence::User.all_names)
-  end
-
   desc "List of all users in Confluence."
   task(:all) do
     $stdout.puts(Confluence::User.all)
   end
 
-  desc "Number of users in Confluence."
-  task(:count) do
-    $stdout.puts(Confluence::User.all_names.length)
+  desc "List of all disabled confluence users."
+  task(:expired) do
+    $stdout.puts(Confluence::User.expired())
   end
 
+  desc "List of all active confluence users."
+  task(:active) do
+    $stdout.puts(Confluence::User.active())
+  end
+  
+  desc "Number of total users (both expired and active) in Confluence."
+  task(:total_count) do
+    $stdout.puts(Confluence::User.all.length)
+  end
+
+  desc "Number of expired users in Confluence."
+  task(:expired_count) do
+    $stdout.puts(Confluence::User.expired.length)
+  end
+
+  desc "Number of active users in Confluence."
+  task(:active_count) do
+    $stdout.puts(Confluence::User.active.length)
+  end
+  
   desc "List of groups for a given user in Confluence."
   task(:groups) do
     user = Confluence::User.find_by_name(ENV["NAME"])
@@ -55,8 +70,8 @@ end
 
 namespace(:group) do
   desc "List of all groups in Confluence."
-  task(:all_names) do
-    $stdout.puts(Confluence::Group.all_names)
+  task(:all) do
+    $stdout.puts(Confluence::Group.all())
   end
 
   desc "Number of groups in Confluence."
