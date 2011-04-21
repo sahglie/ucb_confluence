@@ -2,6 +2,10 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 
 describe Confluence::Jobs::DisableExpiredUsers do
+  before(:all) do
+    Confluence.config = Confluence::Config.new("#{Confluence.root()}/config/config.yml")    
+  end
+  
   before(:each) do
     @job = Confluence::Jobs::DisableExpiredUsers.new
 

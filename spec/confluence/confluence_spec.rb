@@ -2,10 +2,13 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 
 describe Confluence do
+  before(:all) do
+    Confluence.config = Confluence::Config.new("#{Confluence.root()}/config/config.yml")
+  end
+  
+  
   it "should initialize" do
-    ENV['CONFLUENCE_ENV'] = 'test'
     Confluence.conn.should be_a(Confluence::Conn)
-    Confluence.env.should == :test
   end
   
   it "should set ROOT" do

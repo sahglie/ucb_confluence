@@ -1,5 +1,6 @@
 module Confluence
   class Conn
+    
     def initialize(config)
       @config = config
       server = XMLRPC::Client.new2(@config[:server_url])
@@ -29,5 +30,6 @@ module Confluence
       Confluence.logger.debug("#{e.class}: #{e.message}")
       raise(e)
     end
+    
   end
 end

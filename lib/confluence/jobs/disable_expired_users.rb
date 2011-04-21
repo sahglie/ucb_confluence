@@ -36,7 +36,7 @@ module Confluence
       end
   
       def log_job()
-        msg = "#{self.class.name} - #{Confluence.config[:env]}\n\n"
+        msg = "#{self.class.name}\n\n"
         msg.concat("Disabled the following Users:\n\n")
         @disabled_users.each { |u| msg.concat(u) }
         logger.info(msg)
@@ -50,7 +50,7 @@ module Confluence
       # @return [Array<String>] confluence user names.
       #
       def confluence_user_names()
-        Confluence::User.all_names
+        Confluence::User.active.map(&:name)
       end
       
       ##

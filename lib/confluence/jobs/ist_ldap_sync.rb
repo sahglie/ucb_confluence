@@ -33,7 +33,7 @@ module Confluence
         ist_people.each do |ldap_person|
           next unless eligible_for_confluence?(ldap_person)
 
-          user = find_or_new_user(ldap_person.ldap_uid)
+          user = find_or_new_user(ldap_person.uid())
 
           if user.new_record?
             user.save()
@@ -57,8 +57,11 @@ module Confluence
           next if name == "conflusa"      
           
           ldap_person = find_in_ldap(name)
+          next if ldap_person.nil?
+          
           if !in_ist?(ldap_person)
             user = find_in_confluence(name)
+            next if user.nil?
             user.leave_group(IST_GROUP)
             @modified_users << user        
           end
@@ -66,7 +69,7 @@ module Confluence
       end
   
       def log_job()
-        msg = "#{self.class.name} - #{Confluence.config[:env]}\n\n"
+        msg = "#{self.class.name}\n\n"
         
         msg.concat("Modified Users\n\n")
         @modified_users.each { |u| msg.concat(u) }
@@ -87,7 +90,7 @@ module Confluence
       # @return [Array<String>] confluence user names.
       #
       def confluence_user_names()
-        Confluence::User.all_names
+        Confluence::User.active.map(&:name)
       end
       
       ##

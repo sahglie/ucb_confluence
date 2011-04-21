@@ -2,6 +2,10 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 
 describe Confluence::Jobs::IstLdapSync do
+  before(:all) do
+    Confluence.config = Confluence::Config.new("#{Confluence.root()}/config/config.yml")    
+  end
+  
   before(:each) do
     @job = Confluence::Jobs::IstLdapSync.new
 
@@ -18,7 +22,7 @@ describe Confluence::Jobs::IstLdapSync do
 
   context "#sync_ist_from_ldap()" do
     it "should add IST users found in LDAP to Confluence" do
-      ldap_user = mock("user1", {:ldap_uid => "n1", :first_name => "f1",
+      ldap_user = mock("user1", {:uid => "n1", :first_name => "f1",
                                  :last_name => "l1", :email => "e1"})
       @job.stub!(:ist_people).and_return([ldap_user])
       @job.stub!(:eligible_for_confluence?).and_return(true)
@@ -33,7 +37,7 @@ describe Confluence::Jobs::IstLdapSync do
     end
     
     it "should give new IST users found in LDAP membership to the IST_GROUP" do
-      ldap_user = mock("user1", {:ldap_uid => "n1", :first_name => "f1",
+      ldap_user = mock("user1", {:uid => "n1", :first_name => "f1",
                                  :last_name => "l1", :email => "e1"})
       @job.stub!(:ist_people).and_return([ldap_user])
       @job.stub!(:eligible_for_confluence?).and_return(true)
@@ -55,7 +59,7 @@ describe Confluence::Jobs::IstLdapSync do
   
   context "#sync_ist_from_confluence()" do
     it "should remove users from IST group" do
-      ldap_user = mock("user1", {:ldap_uid => "n1", :first_name => "f1",
+      ldap_user = mock("user1", {:uid => "n1", :first_name => "f1",
                                  :last_name => "l1", :email => "e1"})
       @user.save()      
       @job.stub!(:confluence_user_names).and_return([@user.name])

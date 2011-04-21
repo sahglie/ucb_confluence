@@ -3,8 +3,10 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Confluence::Group do
   before(:all) do
+    Confluence.config = Confluence::Config.new("#{Confluence.root()}/config/config.yml")
     Confluence::Group.delete("atestgroup") if Confluence::Group.all.include?("atestgroup")
   end
+
   
   it "should get all groups" do
     Confluence::Group.all.should_not be_empty

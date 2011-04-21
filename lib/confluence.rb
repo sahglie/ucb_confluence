@@ -2,6 +2,7 @@ require 'pp'
 require 'logger'
 require 'ucb_ldap'
 require 'xmlrpc/client'
+require 'fileutils'
 
 require 'confluence/conn'
 require 'confluence/user'
@@ -16,27 +17,38 @@ module Confluence
   ROOT =  File.expand_path(File.dirname(__FILE__) + '/../')
 
   class << self
-    def env()
-      config[:env]
-    end
     
     def conn()
-      @conn ||= Confluence::Conn.new(config)
+      unless @conn
+        @conn = Confluence::Conn.new(config())
+      end
+      @conn
     end
 
     def config()
-      env = CONFLUENCE_ENV if defined?(CONFLUENCE_ENV)
-      @config ||= Confluence::Config.new(ENV['CONFLUENCE_ENV'] || env || :dev)
+      unless @config
+        @config = Confluence::Config.new()
+        Confluence.logger.debug(@config.inspect())
+      end
+      @config
     end
 
+    def config=(conf)
+      @config = conf
+    end
+    
     def logger()
       unless @logger
-        @logger = Logger.new("#{root()}/log/confluence-#{CONFLUENCE_ENV}.log")
+        @logger = Logger.new("#{config.home()}/log/ucb_confluence.log")
         @logger.level = Logger::DEBUG
       end
       @logger
     end
 
+    def logger=(logger)
+      @logger = logger
+    end
+    
     def root()
       ROOT
     end

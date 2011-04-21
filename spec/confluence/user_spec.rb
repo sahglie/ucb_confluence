@@ -2,7 +2,9 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 
 describe Confluence::User do
-  before :all do
+  before(:all) do
+    Confluence.config = Confluence::Config.new("#{Confluence.root()}/config/config.yml")
+
     @user = Confluence::User.new({
       :name => "111111",
       :fullname => "Test Dude",
@@ -14,8 +16,8 @@ describe Confluence::User do
     Confluence::Group.create(@group)
   end
 
-  after :all do
-    @user.delete
+  after(:all) do
+    @user.delete()
     Confluence::Group.delete(@group)
   end
   
@@ -94,16 +96,65 @@ describe Confluence::User do
 end
 
 
+describe Confluence::User, "class methods" do
+  before(:all) do
+    Confluence.config = Confluence::Config.new("#{Confluence.root()}/config/config.yml")
+
+    @user1 = Confluence::User.new({
+      :name => "1",
+      :fullname => "Test Dude",
+      :email => "test_dude@berkeley.edu"
+    })
+    @user1.save()
+
+    @user2 = Confluence::User.new({
+      :name => "2",
+      :fullname => "Test Dude (ACCOUNT DISABLED)",
+      :email => "test_dude@berkeley.edu"
+    })
+    @user2.save()
+  end
+
+  after(:all)do
+    u = Confluence::User.find_by_name("1")
+    u.delete() if u
+
+    u = Confluence::User.find_by_name("2")
+    u.delete() if u
+  end
+
+  context "expired()" do
+    it "should return all users that have disabled accounts" do
+      expired_names = Confluence::User.expired.map { |u| u.name }
+      expired_names.should_not include(@user1.name)
+      expired_names.should include(@user2.name)
+    end
+  end
+
+  context "active()" do
+    it "should return all users that have enabled accounts" do
+      active_names = Confluence::User.active.map { |u| u.name }
+      active_names.should include(@user1.name)
+      active_names.should_not include(@user2.name)
+    end
+  end
+  
+end
+
+
+
 describe Confluence::User, "ldap integration" do
-  before :all do
+  before(:all) do
+    Confluence.config = Confluence::Config.new("#{Confluence.root()}/config/config.yml")
+    
     @ldap_user = "322586"
     u = Confluence::User.find_by_name(@ldap_user)
     u.delete if u
   end
 
-  after :all do
+  after(:all)do
     u = Confluence::User.find_by_name(@ldap_user)
-    u.delete if u
+    u.delete() if u
   end
 
   it "should find_or_create_from_ldap" do
@@ -122,7 +173,9 @@ end
 
 
 describe Confluence::User, "group management" do
-  before :all do
+  before(:all) do
+    Confluence.config = Confluence::Config.new("#{Confluence.root()}/config/config.yml")
+    
     @user = Confluence::User.new({
       :name => "111111",
       :fullname => "Test Dude",
@@ -134,7 +187,7 @@ describe Confluence::User, "group management" do
     Confluence::Group.create(@group)
   end
 
-  after :all do
+  after(:all) do
     @user.delete
     Confluence::Group.delete(@group)
   end

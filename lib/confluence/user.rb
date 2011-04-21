@@ -247,6 +247,24 @@ module Confluence
           })
         end
       end
+
+      ##
+      # Retrieves all users where their accoutns have been disabled.
+      #
+      # @return [Array<Confluence::User>]
+      #
+      def expired()
+        self.all.select { |u| u[:fullname].include?("ACCOUNT DISABLED") }
+      end
+
+      ##
+      # Retrieves all users where their accounts are currently enabled.
+      #
+      # @return [Array<Confluence::User>]
+      #
+      def active()
+        self.all.reject { |u| u[:fullname].include?("ACCOUNT DISABLED") }
+      end
       
       ##
       # Returns a list of all Confluence user names.
@@ -258,6 +276,11 @@ module Confluence
         conn.getActiveUsers(true) 
       end
 
+      ##
+      # Retrieves all users, both expired and active.
+      #
+      # @return [Array<Confluence::User>]
+      #
       def all()
         all_names.map { |name| find_by_name(name) }
       end
